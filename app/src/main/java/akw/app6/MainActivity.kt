@@ -4,22 +4,33 @@ import akw.app6.ui.App6Theme
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Text
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.AccountBox
+import androidx.compose.material.icons.filled.Build
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.setContent
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigate
 import androidx.navigation.compose.rememberNavController
 import androidx.ui.tooling.preview.Preview
+
+enum class Screen {
+    Screen1,
+    Screen2,
+    Screen3,
+    Login
+}
 
 class MainActivity : AppCompatActivity() {
 
@@ -112,14 +123,13 @@ fun MainNav() {
         }
     ) {
         NavHost(navController = nav, startDestination = "Login") {
-            composable("Screen1") { Screen1(onNav) }
-            composable("Screen2") { Screen2(onNav) }
-            composable("Screen3") { Screen3(onNav) }
-            composable("Login") { LoginScreen() }
+            composable(Screen.Screen1.name) { Screen1(onNav) }
+            composable(Screen.Screen2.name) { Screen2(onNav) }
+            composable(Screen.Screen3.name) { Screen3(onNav) }
+            composable(Screen.Login.name) { LoginScreen() }
         }
     }
 }
-
 
 
 @Composable

@@ -2,7 +2,6 @@ package akw.app6
 
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Button
@@ -20,12 +19,23 @@ import androidx.compose.ui.unit.dp
 
 data class Credentials(val userName: String = "", val password: String = "")
 
+data class User(
+    val userName: String,
+    val firstName: String,
+    val lastName: String
+)
+
+
+
 @Composable
 fun LoginScreen() {
 
     val (credentials, setCredentials) = remember { mutableStateOf(Credentials()) }
 
-    Card(backgroundColor = Color.Yellow, modifier = Modifier.fillMaxWidth().padding(top = 20.dp,start = 20.dp,end = 20.dp)) {
+    Card(
+        backgroundColor = Color.Yellow,
+        modifier = Modifier.fillMaxWidth().padding(top = 20.dp, start = 20.dp, end = 20.dp)
+    ) {
 //        Text(text = "LoginScreen")
         Column(modifier = Modifier.fillMaxWidth().padding(all = 20.dp)) {
 //            VSpace(20)
