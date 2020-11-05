@@ -1,5 +1,6 @@
 package akw.app6
 
+import android.util.Log
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.delay
 
 data class Credentials(val userName: String = "", val password: String = "")
 
@@ -65,11 +67,34 @@ sealed class UIState<out T> {
 //}
 
 
+//val onLoginSubmit: (Credentials) -> User = {
+//    println(it)
+//    User()
+//}
+
+//suspend
+fun onLoginSubmit(credentials: Credentials): User {
+    Log.w("Login", "onLoginSubmit: ${credentials}")
+//    delay(3000)
+    return User(credentials.userName, lastName = credentials.userName)
+}
+
+
 @Composable
-fun LoginScreen(onLoginSubmit: (Credentials) -> Unit) {
+fun LoginScreen() {
 
     val (requestState, setRequestState) = remember { mutableStateOf<UIState<User>>(UIState.NotStarted) }
     val (credentials, setCredentials) = remember { mutableStateOf(Credentials()) }
+
+    fun onClick() {
+        try {
+            setRequestState(UIState.Loading)
+            val user = onLoginSubmit(credentials) // takes some time
+            setRequestState(UIState.Success(user))
+        } catch (e: Exception) {
+            setRequestState(UIState.Error(e))
+        }
+    }
 
     Card(
         backgroundColor = Color.Yellow,
@@ -95,13 +120,16 @@ fun LoginScreen(onLoginSubmit: (Credentials) -> Unit) {
 
             VSpace(20)
 
-            Button(onClick = {}, modifier = Modifier.fillMaxWidth()) {
+            Button(onClick = { onClick() }, modifier = Modifier.fillMaxWidth()) {
                 Text(text = "Login")
             }
 
             VSpace(40)
 
-            TextButton(onClick = {}, modifier = Modifier.align(Alignment.CenterHorizontally)) {
+            TextButton(
+                onClick = { onClick() },
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            ) {
                 Text(text = "Forgot Password?")
             }
 
@@ -109,7 +137,7 @@ fun LoginScreen(onLoginSubmit: (Credentials) -> Unit) {
 
             Card(backgroundColor = Color.Cyan) {
                 when (requestState) {
-                    is UIState.NotStarted -> Text("")
+                    is UIState.NotStarted -> Text("NotStarted")
                     is UIState.Loading -> CircularProgressIndicator()
                     is UIState.Error -> Text(text = "Problem: ${requestState.error.message}")
                     is UIState.Success -> Text(text = "Success: ${requestState.data.firstName}")
