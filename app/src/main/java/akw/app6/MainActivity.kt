@@ -30,7 +30,6 @@ class MainActivity : AppCompatActivity() {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     color = MaterialTheme.colors.background,
-                    modifier = Modifier.padding(20.dp)
                 ) {
                     MainNav()
                 }
@@ -112,7 +111,7 @@ fun MainNav() {
             }
         }
     ) {
-        NavHost(navController = nav, startDestination = "Screen1") {
+        NavHost(navController = nav, startDestination = "Login") {
             composable("Screen1") { Screen1(onNav) }
             composable("Screen2") { Screen2(onNav) }
             composable("Screen3") { Screen3(onNav) }
@@ -121,15 +120,7 @@ fun MainNav() {
     }
 }
 
-@Composable
-fun VSpace(preferredHeight: Int = 10) {
-    Spacer(modifier = Modifier.preferredHeight(preferredHeight.dp))
-}
 
-@Composable
-fun HSpace(preferredWidth: Int = 10) {
-    Spacer(modifier = Modifier.preferredWidth(preferredWidth.dp))
-}
 
 @Composable
 fun Head(onNav: (screen: String) -> Unit) {
