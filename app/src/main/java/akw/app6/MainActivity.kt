@@ -86,6 +86,11 @@ fun MainNav() {
                     "Screen3"
                 )
             }
+            TextButton(onClick = { nav.navigate("Login"); scaffoldState.drawerState.close() }) {
+                Text(
+                    "Login"
+                )
+            }
         },
         bottomBar = {
             BottomNavigation {
@@ -111,6 +116,7 @@ fun MainNav() {
             composable("Screen1") { Screen1(onNav) }
             composable("Screen2") { Screen2(onNav) }
             composable("Screen3") { Screen3(onNav) }
+            composable("Login") { LoginScreen() }
         }
     }
 }
