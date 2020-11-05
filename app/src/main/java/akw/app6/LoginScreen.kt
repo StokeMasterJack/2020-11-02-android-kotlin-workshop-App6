@@ -25,7 +25,7 @@ fun LoginScreen() {
 
     val (credentials, setCredentials) = remember { mutableStateOf(Credentials()) }
 
-    Card(backgroundColor = Color.Yellow, modifier = Modifier.fillMaxSize().padding(all = 20.dp)) {
+    Card(backgroundColor = Color.Yellow, modifier = Modifier.fillMaxWidth().padding(top = 20.dp,start = 20.dp,end = 20.dp)) {
 //        Text(text = "LoginScreen")
         Column(modifier = Modifier.fillMaxWidth().padding(all = 20.dp)) {
 //            VSpace(20)
