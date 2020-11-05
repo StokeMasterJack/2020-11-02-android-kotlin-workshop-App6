@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedTask
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -72,27 +73,35 @@ sealed class UIState<out T> {
 //    User()
 //}
 
-//suspend
-fun onLoginSubmit(credentials: Credentials): User {
+suspend fun onLoginSubmit(credentials: Credentials): User {
     Log.w("Login", "onLoginSubmit: ${credentials}")
-//    delay(3000)
-    return User(credentials.userName, lastName = credentials.userName)
+    delay(3000)
+    if (credentials.userName == "err") {
+        throw RuntimeException("Network Error")
+    }
+    return User(userName = "dford", firstName = "Dave", lastName = "Ford")
 }
 
 
 @Composable
 fun LoginScreen() {
 
-    val (requestState, setRequestState) = remember { mutableStateOf<UIState<User>>(UIState.NotStarted) }
+    val (uiState, setUIState) = remember { mutableStateOf<UIState<User>>(UIState.NotStarted) }
     val (credentials, setCredentials) = remember { mutableStateOf(Credentials()) }
 
-    fun onClick() {
-        try {
-            setRequestState(UIState.Loading)
-            val user = onLoginSubmit(credentials) // takes some time
-            setRequestState(UIState.Success(user))
-        } catch (e: Exception) {
-            setRequestState(UIState.Error(e))
+    val (reqCount, setReqCount) = remember { mutableStateOf(0) }
+
+    LaunchedTask(reqCount) {
+        if (reqCount != 0 && uiState != UIState.Loading) {
+
+            try {
+                setUIState(UIState.Loading)
+                val user = onLoginSubmit(credentials) // takes some time
+                setUIState(UIState.Success(user))
+            } catch (e: Exception) {
+                setUIState(UIState.Error(e))
+            }
+
         }
     }
 
@@ -100,9 +109,11 @@ fun LoginScreen() {
         backgroundColor = Color.Yellow,
         modifier = Modifier.fillMaxWidth().padding(top = 20.dp, start = 20.dp, end = 20.dp)
     ) {
-//        Text(text = "LoginScreen")
+
         Column(modifier = Modifier.fillMaxWidth().padding(all = 20.dp)) {
-//            VSpace(20)
+
+            VSpace(20)
+            Text("reqCount: $reqCount")
             TextField(
                 label = { Text("Username") },
                 value = credentials.userName,
@@ -120,14 +131,18 @@ fun LoginScreen() {
 
             VSpace(20)
 
-            Button(onClick = { onClick() }, modifier = Modifier.fillMaxWidth()) {
+            Button(
+                enabled = uiState != UIState.Loading,
+                onClick = { setReqCount(reqCount + 1) },
+                modifier = Modifier.fillMaxWidth()
+            ) {
                 Text(text = "Login")
             }
 
             VSpace(40)
 
             TextButton(
-                onClick = { onClick() },
+                onClick = { },
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             ) {
                 Text(text = "Forgot Password?")
@@ -136,11 +151,11 @@ fun LoginScreen() {
             VSpace()
 
             Card(backgroundColor = Color.Cyan) {
-                when (requestState) {
+                when (uiState) {
                     is UIState.NotStarted -> Text("NotStarted")
                     is UIState.Loading -> CircularProgressIndicator()
-                    is UIState.Error -> Text(text = "Problem: ${requestState.error.message}")
-                    is UIState.Success -> Text(text = "Success: ${requestState.data.firstName}")
+                    is UIState.Error -> Text(text = "Problem: ${uiState.error.message}")
+                    is UIState.Success -> Text(text = "Success: ${uiState.data.firstName}")
                 }
             }
 
