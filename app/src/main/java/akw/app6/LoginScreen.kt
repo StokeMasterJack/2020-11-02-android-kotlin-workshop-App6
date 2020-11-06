@@ -6,10 +6,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedTask
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
+import androidx.compose.runtime.state
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,6 +21,8 @@ data class User(
     val userName: String = "",
     val firstName: String = "",
     val lastName: String = ""
+
+
 )
 
 //enum class UIState {
@@ -40,38 +40,12 @@ object Po {
     }
 }
 
+val users: List<User> = listOf(
+    User("dford", "David", "Ford"),
+    User("kford", "Kellie", "Ford"),
+    User("jblow", "Joe", "Blow")
+)
 
-sealed class UIState<out T> {
-    object NotStarted : UIState<Nothing>()
-    object Loading : UIState<Nothing>()
-    data class Success<T>(val data: T) : UIState<T>()
-    data class Error(val error: Throwable) : UIState<Nothing>()
-}
-
-//fun main() {
-//
-//    val uis1: UIState<User> = Success(User())
-//    val uis2: UIState<User> = Error(RuntimeException())
-//    val uis3: UIState<User> = Loading
-//
-////    val l1 = Loading()
-////    val l2 = Loading()
-//    val s1 = Success(User(userName = "ddd", firstName = "ff", lastName = "dd"))
-//    val s2 = Success(User(userName = "rr", firstName = "rr", lastName = "dd"))
-//
-//    when (s) {
-//        is Loading -> ""
-//        is Success -> ""
-//        is Error -> ""
-//    }
-//
-//}
-
-
-//val onLoginSubmit: (Credentials) -> User = {
-//    println(it)
-//    User()
-//}
 
 suspend fun onLoginSubmit(credentials: Credentials): User {
     Log.w("Login", "onLoginSubmit: ${credentials}")
@@ -82,7 +56,10 @@ suspend fun onLoginSubmit(credentials: Credentials): User {
     return User(userName = "dford", firstName = "Dave", lastName = "Ford")
 }
 
+/*
 
+V = F(M)
+ */
 @Composable
 fun LoginScreen() {
 
@@ -91,9 +68,24 @@ fun LoginScreen() {
 
     val (reqCount, setReqCount) = remember { mutableStateOf(0) }
 
+
+    val all1 = "${credentials.userName} ${credentials.password}"
+    val all2 = remember { "${credentials.userName} ${credentials.password}" }
+    val all3 = remember(credentials.userName,credentials.password) { "${credentials.userName} ${credentials.password}" }
+
+//    DisposableEffect(reqCount) {
+//
+//        //fasfasf
+//        //fasfasf
+//
+//        onDispose {
+//
+//        }
+//
+//    }
+
     LaunchedTask(reqCount) {
         if (reqCount != 0 && uiState != UIState.Loading) {
-
             try {
                 setUIState(UIState.Loading)
                 val user = onLoginSubmit(credentials) // takes some time
@@ -101,7 +93,6 @@ fun LoginScreen() {
             } catch (e: Exception) {
                 setUIState(UIState.Error(e))
             }
-
         }
     }
 

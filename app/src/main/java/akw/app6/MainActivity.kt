@@ -4,9 +4,6 @@ import akw.app6.ui.App6Theme
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Text
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
@@ -14,9 +11,6 @@ import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.setContent
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -29,7 +23,17 @@ enum class Screen {
     Screen1,
     Screen2,
     Screen3,
-    Login
+    Login,
+    Users
+}
+
+sealed class Route {
+    object Screen1 : Route()
+    object Screen2 : Route()
+    object Screen3 : Route()
+    object Login : Route()
+    object Users : Route()
+    data class User(val userId: Int) : Route()
 }
 
 class MainActivity : AppCompatActivity() {
@@ -55,7 +59,6 @@ fun MainNav() {
 
     val scaffoldState = rememberScaffoldState()
     val nav: NavHostController = rememberNavController()
-    val xx = remember { mutableStateOf(1) }
 
     val onNav: (route: String) -> Unit = {
         nav.navigate(it)
@@ -122,35 +125,13 @@ fun MainNav() {
             }
         }
     ) {
-        NavHost(navController = nav, startDestination = "Login") {
+        NavHost(navController = nav, startDestination = Screen.Users.name) {
             composable(Screen.Screen1.name) { Screen1(onNav) }
             composable(Screen.Screen2.name) { Screen2(onNav) }
             composable(Screen.Screen3.name) { Screen3(onNav) }
             composable(Screen.Login.name) { LoginScreen() }
-        }
-    }
-}
-
-
-@Composable
-fun Head(onNav: (screen: String) -> Unit) {
-    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-        Button(onClick = { onNav("Screen1") }) {
-            Text(
-                text = "Screen1"
-            )
-        }
-        HSpace()
-        Button(onClick = { onNav("Screen2") }) {
-            Text(
-                text = "Screen2"
-            )
-        }
-        HSpace()
-        Button(onClick = { onNav("Screen3") }) {
-            Text(
-                text = "Screen3"
-            )
+            composable(Screen.Users.name) { UsersScreen() }
+//            composable(Screen.User.name) { UserScreen(userId = 432) }
         }
     }
 }
