@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 @Composable
 fun Screen1() {
     val bg = MaterialTheme.colors.secondary
+    val t = MaterialTheme.typography
 
     Column {
         Text(text = "Screen1", color = bg)

@@ -1,9 +1,7 @@
 package akw.app6.ui
 
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.darkColors
-import androidx.compose.material.lightColors
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
@@ -16,7 +14,7 @@ private val DarkColorPalette = darkColors(
 private val LightColorPalette = lightColors(
     primary = Color.Green,
     primaryVariant = purple700,
-    secondary = Color.Yellow
+    secondary = Color.Magenta
 
     /* Other default colors to override
 background = Color.White,
@@ -42,4 +40,21 @@ fun IntuitTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable
         shapes = shapes,
         content = content
     )
+}
+
+object IntuitTheme {
+
+    @Composable
+    val colors: Colors
+        get() = MaterialTheme.colors
+
+    @Composable
+    val typography: Typography
+        get() = MaterialTheme.typography
+
+    @Composable
+    operator fun component1() = colors
+
+    @Composable
+    operator fun component2() = typography
 }
