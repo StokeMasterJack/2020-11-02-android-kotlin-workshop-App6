@@ -104,6 +104,11 @@ fun MainNav() {
                     "Login"
                 )
             }
+            TextButton(onClick = { nav.navigate(Screen.Users.name); scaffoldState.drawerState.close() }) {
+                Text(
+                    "Users"
+                )
+            }
         },
         bottomBar = {
             BottomNavigation {

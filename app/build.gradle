@@ -53,6 +53,9 @@ dependencies {
 
 
     implementation "androidx.navigation:navigation-compose:1.0.0-alpha01"
+    implementation("com.squareup.retrofit2:retrofit:2.8.1")
+    implementation("com.squareup.retrofit2:converter-gson:2.8.1")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.6.0")
     testImplementation 'junit:junit:4.13.1'
 
 
