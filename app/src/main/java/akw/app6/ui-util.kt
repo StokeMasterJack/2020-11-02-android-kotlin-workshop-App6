@@ -7,6 +7,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
+typealias VFC = @Composable () -> Unit
+
 sealed class UIState<out T> {
     object NotStarted : UIState<Nothing>()
     object Loading : UIState<Nothing>()

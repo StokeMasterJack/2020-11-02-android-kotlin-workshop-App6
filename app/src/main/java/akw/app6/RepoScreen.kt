@@ -5,9 +5,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 
 @Composable
-fun Screen3(onNav: (screen: String) -> Unit) {
+fun RepoScreen() {
     Column {
-//        Head(onNav = onNav)
-        Text(text = "Screen3")
+        Text(text = "RepoScreen")
     }
 }

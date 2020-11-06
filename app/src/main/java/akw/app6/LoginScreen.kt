@@ -2,17 +2,19 @@ package akw.app6
 
 import android.util.Log
 import androidx.compose.foundation.Text
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
-import androidx.compose.runtime.*
-import androidx.compose.runtime.state
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedTask
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
 import kotlinx.coroutines.delay
 
 data class Credentials(val userName: String = "", val password: String = "")
@@ -23,7 +25,11 @@ data class User(
     val lastName: String = ""
 
 
-)
+) {
+    val fullName: String get() = "$firstName $lastName"
+
+    override fun toString() = fullName
+}
 
 //enum class UIState {
 //    Waiting,
@@ -39,12 +45,6 @@ object Po {
 
     }
 }
-
-val users: List<User> = listOf(
-    User("dford", "David", "Ford"),
-    User("kford", "Kellie", "Ford"),
-    User("jblow", "Joe", "Blow")
-)
 
 
 suspend fun onLoginSubmit(credentials: Credentials): User {
@@ -69,20 +69,6 @@ fun LoginScreen() {
     val (reqCount, setReqCount) = remember { mutableStateOf(0) }
 
 
-    val all1 = "${credentials.userName} ${credentials.password}"
-    val all2 = remember { "${credentials.userName} ${credentials.password}" }
-    val all3 = remember(credentials.userName,credentials.password) { "${credentials.userName} ${credentials.password}" }
-
-//    DisposableEffect(reqCount) {
-//
-//        //fasfasf
-//        //fasfasf
-//
-//        onDispose {
-//
-//        }
-//
-//    }
 
     LaunchedTask(reqCount) {
         if (reqCount != 0 && uiState != UIState.Loading) {
@@ -96,62 +82,71 @@ fun LoginScreen() {
         }
     }
 
-    Card(
-        backgroundColor = Color.Yellow,
-        modifier = Modifier.fillMaxWidth().padding(top = 20.dp, start = 20.dp, end = 20.dp)
-    ) {
+    Surface(color = Color.LightGray) {
+        Card(
+            backgroundColor = Color.White,
+            modifier = Modifier.fillMaxSize().padding(all = 20.dp)
+        ) {
 
-        Column(modifier = Modifier.fillMaxWidth().padding(all = 20.dp)) {
+            Column(modifier = Modifier.fillMaxWidth().padding(all = 20.dp)) {
+                VSpace(40)
+                Text(
+                    text = "Intuit",
+                    fontSize = 10.em,
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center
+                )
+                VSpace(40)
+                TextField(
+                    label = { Text("Username") },
+                    value = credentials.userName,
+                    modifier = Modifier.fillMaxWidth(),
+                    onValueChange = { setCredentials(credentials.copy(userName = it)) })
 
-            VSpace(20)
-            Text("reqCount: $reqCount")
-            TextField(
-                label = { Text("Username") },
-                value = credentials.userName,
-                modifier = Modifier.fillMaxWidth(),
-                onValueChange = { setCredentials(credentials.copy(userName = it)) })
+                VSpace(20)
 
-            VSpace(20)
+                TextField(
+                    visualTransformation = PasswordVisualTransformation(),
+                    label = { Text("Password") },
+                    value = credentials.password,
+                    modifier = Modifier.fillMaxWidth(),
+                    onValueChange = { setCredentials(credentials.copy(password = it)) })
 
-            TextField(
-                visualTransformation = PasswordVisualTransformation(),
-                label = { Text("Password") },
-                value = credentials.password,
-                modifier = Modifier.fillMaxWidth(),
-                onValueChange = { setCredentials(credentials.copy(password = it)) })
+                VSpace(40)
 
-            VSpace(20)
-
-            Button(
-                enabled = uiState != UIState.Loading,
-                onClick = { setReqCount(reqCount + 1) },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(text = "Login")
-            }
-
-            VSpace(40)
-
-            TextButton(
-                onClick = { },
-                modifier = Modifier.align(Alignment.CenterHorizontally)
-            ) {
-                Text(text = "Forgot Password?")
-            }
-
-            VSpace()
-
-            Card(backgroundColor = Color.Cyan) {
-                when (uiState) {
-                    is UIState.NotStarted -> Text("NotStarted")
-                    is UIState.Loading -> CircularProgressIndicator()
-                    is UIState.Error -> Text(text = "Problem: ${uiState.error.message}")
-                    is UIState.Success -> Text(text = "Success: ${uiState.data.firstName}")
+                Button(
+                    enabled = uiState != UIState.Loading,
+                    onClick = { setReqCount(reqCount + 1) },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(text = "Login")
                 }
-            }
 
+                VSpace(40)
+
+                TextButton(
+                    onClick = { },
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                ) {
+                    Text(text = "Forgot Password?")
+                }
+
+                VSpace()
+
+                Box(
+                    modifier = Modifier.fillMaxWidth().align(Alignment.CenterHorizontally)
+                ) {
+                    when (uiState) {
+                        is UIState.NotStarted -> Text("")
+                        is UIState.Loading -> CircularProgressIndicator()
+                        is UIState.Error -> Text("Problem: ${uiState.error.message}")
+                        is UIState.Success -> Text(" ${uiState.data}")
+                    }
+                }
+
+
+            }
 
         }
-
     }
 }
