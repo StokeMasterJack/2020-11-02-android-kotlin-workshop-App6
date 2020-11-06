@@ -7,6 +7,10 @@ import androidx.compose.runtime.Composable
 @Composable
 fun Screen2() {
     Column {
+
+        val user: User = AmbientUser.current
+
         Text(text = "Screen2")
+        Text(text = "user: ${user.userName}")
     }
 }

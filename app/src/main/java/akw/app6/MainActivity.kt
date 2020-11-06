@@ -11,9 +11,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.setContent
 import androidx.compose.ui.text.font.FontWeight
@@ -27,6 +25,13 @@ import kotlinx.coroutines.flow.Flow
 import ss.ssutil.VF
 
 
+val AmbientUser = staticAmbientOf { User(userName = "Fred") }
+
+@Composable
+fun ProvidesUser(user: User, children: @Composable () -> Unit) {
+    Providers(AmbientUser provides user, children = children)
+}
+
 class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,13 +42,14 @@ class MainActivity : AppCompatActivity() {
 
         setContent {
             IntuitTheme {
-
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    color = MaterialTheme.colors.background,
-                ) {
-                    Main(prefsRepo.prefsFlow)
+                ProvidesUser(user = User(userName = "Joe")) {
+                    Surface(
+                        color = MaterialTheme.colors.background,
+                    ) {
+                        Main(prefsRepo.prefsFlow)
+                    }
                 }
+
             }
         }
     }
